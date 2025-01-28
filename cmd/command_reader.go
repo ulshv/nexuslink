@@ -14,10 +14,12 @@ func readCommandsLoop(commandCh chan Command) {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("> ")
 		inputText, err := reader.ReadString('\n')
+
 		if err != nil {
 			fmt.Printf("[error]: readCommandsLoop: failed to read input: %v\n", err)
 			continue
 		}
+
 		cleanStr := strings.Trim(inputText, " \n")
 		params := strings.Split(cleanStr, " ")
 

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"sync"
+
+	"github.com/ulshv/nexuslink/pkg/server"
 )
 
 type commandHandler func(args []string)
@@ -38,12 +40,25 @@ func newCommandHandlers() commandHandlers {
 	return commandHandlers{
 		"help": func(args []string) {
 			fmt.Println(`Available commands:
-- help: Show this help message
-- connect: Connect to a server
-- disconnect: Disconnect from the server
+- start <port>: Start a server
+- connect <host:port>: Connect to a server
+- disconnect <uuid>: Disconnect from the server
 - list: List all connected servers
-- send: Send a message to the server
+- info <uuid>: Show info about a server
+- send <uuid> <message...>: Send a message to the server
 - exit: Exit the program`)
+		},
+		"start": func(args []string) {
+			if len(args) != 1 {
+				fmt.Println("[error]: start: invalid number of arguments (need <port>)")
+				return
+			}
+			fmt.Println("[info]: starting TCP server")
+			server := server.New(&server.Config{
+				Host: "0.0.0.0",
+				Port: args[0],
+			})
+			go server.Run()
 		},
 	}
 }

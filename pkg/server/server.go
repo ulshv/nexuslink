@@ -1,7 +1,6 @@
 package server
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net"
@@ -44,19 +43,32 @@ func (server *Server) Run() {
 		client := &Client{
 			conn: conn,
 		}
-		go client.handleRequest()
+		go client.handleRequestV2()
 	}
 }
 
-func (client *Client) handleRequest() {
-	reader := bufio.NewReader(client.conn)
+func (client *Client) handleRequestV2() {
+	buf := make([]byte, 1024)
 	for {
-		message, err := reader.ReadString('\n')
+		n, err := client.conn.Read(buf)
 		if err != nil {
 			client.conn.Close()
 			return
 		}
-		fmt.Printf("Message incoming: %s", string(message))
+		fmt.Printf("tcp.client.message, length: %v, message: %v\n", n, string(buf[:n]))
 		client.conn.Write([]byte("Message received.\n"))
 	}
 }
+
+// func (client *Client) handleRequest() {
+// 	reader := bufio.NewReader(client.conn)
+// 	for {
+// 		message, err := reader.ReadString('\n')
+// 		if err != nil {
+// 			client.conn.Close()
+// 			return
+// 		}
+// 		fmt.Printf("Message incoming: %s", string(message))
+// 		client.conn.Write([]byte("Message received.\n"))
+// 	}
+// }
