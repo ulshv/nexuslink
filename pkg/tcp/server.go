@@ -1,9 +1,11 @@
-package server
+package tcp
 
 import (
 	"fmt"
 	"log"
 	"net"
+
+	"github.com/ulshv/nexuslink/pkg/logger"
 )
 
 type Server struct {
@@ -11,43 +13,46 @@ type Server struct {
 	port string
 }
 
-type Client struct {
+type Connection struct {
 	conn net.Conn
 }
 
-type Config struct {
+type NewServerConfig struct {
 	Host string
 	Port string
 }
 
-func New(config *Config) *Server {
+func NewServer(config *NewServerConfig) *Server {
 	return &Server{
 		host: config.Host,
 		port: config.Port,
 	}
 }
 
-func (server *Server) Run() {
+func (server *Server) RunServer() {
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", server.host, server.port))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer listener.Close()
 
+	fmt.Printf("[info]: server started, listening on %s:%s\n", server.host, server.port)
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		client := &Client{
+		logger.СlearCurrentLine()
+		fmt.Printf("[info]: new client connected, Addr: %s\n", conn.LocalAddr().String())
+		client := &Connection{
 			conn: conn,
 		}
 		go client.handleRequestV2()
 	}
 }
 
-func (client *Client) handleRequestV2() {
+func (client *Connection) handleRequestV2() {
 	buf := make([]byte, 1024)
 	for {
 		n, err := client.conn.Read(buf)
@@ -55,7 +60,11 @@ func (client *Client) handleRequestV2() {
 			client.conn.Close()
 			return
 		}
-		fmt.Printf("tcp.client.message, length: %v, message: %v\n", n, string(buf[:n]))
+		// Green console colour:    \x1b[32m
+		// Reset console colour:    \x1b[0m
+		fmt.Printf("\x1b[32m%s\x1b[0m%s", "[message]", ": ")
+		fmt.Println(string(buf[:n]))
+		fmt.Printf("[info]: tcp.client.message, length: %v\n", n)
 		client.conn.Write([]byte("Message received.\n"))
 	}
 }

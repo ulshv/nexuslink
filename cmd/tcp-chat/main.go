@@ -6,12 +6,11 @@ import (
 	"sync"
 )
 
-func logHello(port int) {
-	fmt.Printf(`Welcome to the NexusLink!
-Server is running on port %v
+func logHello() {
+	msg := `Welcome to the tcp-chat!
 Type 'help' for a list of commands.
-
-`, port)
+`
+	fmt.Println(msg)
 }
 
 func main() {
@@ -23,7 +22,7 @@ func main() {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	logHello(8080)
+	logHello()
 	go commandsWorker(ctx, wg, commandCh)
 	readCommandsLoop(commandCh)
 
