@@ -1,9 +1,4 @@
-package tcp_commands
-
-// type TCPCommand struct {
-// 	Command string
-// 	Payload []byte
-// }
+package tcp
 
 type TCPCommand = string
 
@@ -14,16 +9,10 @@ const (
 	CommandClientRegister TCPCommand = "client/register"
 
 	// Commands sent from server to client
+	CommandServerInit            TCPCommand = "server/init"
 	CommandServerLoginPrompt     TCPCommand = "server/login_prompt"
 	CommandServerLoginSuccess    TCPCommand = "server/login_success"
 	CommandServerLoginFailed     TCPCommand = "server/login_failed"
 	CommandServerRegisterSuccess TCPCommand = "server/register_success"
 	CommandServerRegisterFailed  TCPCommand = "server/register_failed"
 )
-
-// func NewCommand(command TCPCommandString, payload []byte) TCPCommand {
-// 	return TCPCommand{
-// 		Command: command,
-// 		Payload: payload,
-// 	}
-// }

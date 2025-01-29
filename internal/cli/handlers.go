@@ -1,11 +1,11 @@
-package cli_commands
+package cli
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/ulshv/nexuslink/internal/pb"
 	"github.com/ulshv/nexuslink/internal/tcp"
-	"github.com/ulshv/nexuslink/internal/tcp_commands"
 )
 
 func helloHandler(args []string) {
@@ -49,7 +49,7 @@ func connectHandler(args []string) {
 	if len(args) == 2 {
 		host = args[1]
 	}
-	client, err := tcp.NewClient(tcp.NewClientConfig{
+	sConn, err := tcp.NewServerConnection(tcp.NewClientConfig{
 		ServerHost: host,
 		ServerPort: port,
 	})
@@ -57,8 +57,11 @@ func connectHandler(args []string) {
 		fmt.Println("[error]: connect: failed to connect to the server: ", err)
 		return
 	}
-	go client.SendMessageV2(&pb.TCPCommand{
-		Command: tcp_commands.CommandClientInit,
+	// Run goroutine to read messages from the server
+	go tcp.RunClient(context.Background(), sConn.MessagesCh, *sConn)
+	// Send the client init command to the server
+	go tcp.SendMessage(sConn, &pb.TCPCommand{
+		Command: tcp.CommandClientInit,
 		Payload: []byte{},
 	})
 }
