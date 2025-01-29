@@ -15,4 +15,5 @@ It allows:
   - [TODO] send messages in the room
   - [TODO] exit the room
   - [TODO] disconnect from the server
+  - [TODO] [OPTIONAL] DM functionality
 

@@ -11,6 +11,7 @@ func newCommandHandlers() CommandHandlers {
 		"help":    helloHandler,
 		"start":   startHandler,
 		"connect": connectHandler,
+		"login":   loginHandler,
 	}
 }
 

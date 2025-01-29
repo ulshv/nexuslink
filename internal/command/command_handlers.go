@@ -57,3 +57,12 @@ func connectHandler(args []string) {
 	}
 	go client.SendMessage("Hello, world!")
 }
+
+func loginHandler(args []string) {
+	if len(args) != 1 {
+		fmt.Println("[error]: login: invalid number of arguments (need <nickname>)")
+		return
+	}
+	nickname := args[0]
+	fmt.Printf("[info]: logging in as %s\n", nickname)
+}
