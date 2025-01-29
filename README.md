@@ -17,3 +17,22 @@ It allows:
   - [TODO] disconnect from the server
   - [TODO] [OPTIONAL] DM functionality
 
+## Build
+
+You need to have `protoc-gen-go` module to be installed:
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+```
+
+Build protobuf files into `./internal/proto`:
+```bash
+protoc -I=./proto --go_out=./internal/proto ./proto/*
+```
+
+# Usage
+
+Start the server:
+```bash
+./run
+```
+

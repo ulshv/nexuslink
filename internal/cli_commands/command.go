@@ -1,4 +1,4 @@
-package command
+package cli_commands
 
 type Command struct {
 	Command string
