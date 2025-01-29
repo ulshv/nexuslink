@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go run ./cmd/tcp-chat/.
+go run ./cmd/main.go

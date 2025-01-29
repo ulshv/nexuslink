@@ -1,9 +1,9 @@
-package main
+package command
 
 import (
 	"fmt"
 
-	"github.com/ulshv/nexuslink/pkg/tcp"
+	"github.com/ulshv/nexuslink/internal/tcp"
 )
 
 func helloHandler(args []string) {

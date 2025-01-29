@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"sync"
+
+	"github.com/ulshv/nexuslink/internal/command"
 )
 
 func logHello() {
@@ -17,14 +19,14 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	commandCh := make(chan Command)
+	commandCh := make(chan command.Command)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
 	logHello()
-	go commandsWorker(ctx, wg, commandCh)
-	readCommandsLoop(commandCh)
+	go command.CommandsWorker(ctx, wg, commandCh)
+	command.ReadCommandsLoop(commandCh)
 
 	wg.Wait()
 }

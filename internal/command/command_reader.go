@@ -1,4 +1,4 @@
-package main
+package command
 
 import (
 	"bufio"
@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func readCommandsLoop(commandCh chan Command) {
+func ReadCommandsLoop(commandCh chan Command) {
 	for {
 		time.Sleep(100 * time.Millisecond) // make the `>` appear after the previous log from goroutine
 		reader := bufio.NewReader(os.Stdin)

@@ -1,4 +1,4 @@
-package main
+package command
 
 import (
 	"context"
@@ -6,7 +6,15 @@ import (
 	"sync"
 )
 
-func handleCommand(handlers commandHandlers, command Command) {
+func newCommandHandlers() CommandHandlers {
+	return CommandHandlers{
+		"help":    helloHandler,
+		"start":   startHandler,
+		"connect": connectHandler,
+	}
+}
+
+func handleCommand(handlers CommandHandlers, command Command) {
 	fmt.Println("[debug]: handleCommand: received command:", command)
 	handler, ok := handlers[command.Command]
 	if !ok {
@@ -16,7 +24,7 @@ func handleCommand(handlers commandHandlers, command Command) {
 	handler(command.Args)
 }
 
-func commandsWorker(ctx context.Context, wg *sync.WaitGroup, ch chan Command) {
+func CommandsWorker(ctx context.Context, wg *sync.WaitGroup, ch chan Command) {
 	handlers := newCommandHandlers()
 	defer wg.Done()
 
@@ -28,13 +36,5 @@ func commandsWorker(ctx context.Context, wg *sync.WaitGroup, ch chan Command) {
 			fmt.Println("commandsWorker: received ctx cancellation, stopping the worker")
 			return
 		}
-	}
-}
-
-func newCommandHandlers() commandHandlers {
-	return commandHandlers{
-		"help":    helloHandler,
-		"start":   startHandler,
-		"connect": connectHandler,
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/ulshv/nexuslink/pkg/logger"
+	"github.com/ulshv/nexuslink/internal/logger"
 )
 
 type Server struct {
