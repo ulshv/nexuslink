@@ -1,4 +1,4 @@
-package cli
+package cli_app
 
 import (
 	"context"
@@ -39,16 +39,19 @@ func startHandler(args []string) {
 }
 
 func connectHandler(args []string) {
+	// read params
 	if len(args) < 1 || len(args) > 2 {
 		fmt.Println("[error]: connect: invalid number of arguments (need <port> [<host> optional])")
 		return
 	}
 	fmt.Printf("[info]: connecting to the server on port %s...\n", args[0])
+	// configure port/host
 	port := args[0]
 	host := "localhost"
 	if len(args) == 2 {
 		host = args[1]
 	}
+	// establish TCP connection to the server
 	sConn, err := tcp.NewServerConnection(tcp.NewClientConfig{
 		ServerHost: host,
 		ServerPort: port,
