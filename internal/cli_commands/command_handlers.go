@@ -3,7 +3,9 @@ package cli_commands
 import (
 	"fmt"
 
+	"github.com/ulshv/nexuslink/internal/pb"
 	"github.com/ulshv/nexuslink/internal/tcp"
+	"github.com/ulshv/nexuslink/internal/tcp_commands"
 )
 
 func helloHandler(args []string) {
@@ -48,14 +50,17 @@ func connectHandler(args []string) {
 		host = args[1]
 	}
 	client, err := tcp.NewClient(tcp.NewClientConfig{
-		Address: host,
-		Port:    port,
+		ServerHost: host,
+		ServerPort: port,
 	})
 	if err != nil {
 		fmt.Println("[error]: connect: failed to connect to the server: ", err)
 		return
 	}
-	go client.SendMessage("Hello, world!")
+	go client.SendMessageV2(&pb.TCPCommand{
+		Command: tcp_commands.CommandClientInit,
+		Payload: []byte{},
+	})
 }
 
 func loginHandler(args []string) {
