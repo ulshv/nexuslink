@@ -8,31 +8,6 @@ package cli_app
 // 	"github.com/eiannone/keyboard"
 // )
 
-// type CLIv2 struct {
-// 	reader       *bufio.Reader
-// 	prompt       string
-// 	currInput    string
-// 	isLastPrompt bool
-// }
-
-// var cliv2 *CLIv2 = &CLIv2{
-// 	reader:       bufio.NewReader(os.Stdin),
-// 	prompt:       "> ",
-// 	currInput:    "",
-// 	isLastPrompt: false,
-// }
-
-// func processInput(input string) {
-// 	fmt.Println("input:", input)
-// }
-
-// func printPromptLine() {
-// 	fmt.Printf(clearLine)
-// 	fmt.Printf(cliv2.prompt + cliv2.currInput)
-// 	fmt.Println("cliv2.currInput:", cliv2.currInput)
-// 	cliv2.isLastPrompt = true
-// }
-
 // func ReadCommandsLoopV3(commandCh chan<- Command) {
 // 	for {
 // 		char, key, err := keyboard.GetKey()
@@ -56,12 +31,4 @@ package cli_app
 // 			cliv2.currInput += string(char)
 // 		}
 // 	}
-// }
-
-// func LogV2(message string, args ...any) {
-// 	if !cliv2.isLastPrompt {
-// 		fmt.Print(clearLine)
-// 	}
-// 	fmt.Printf(message+"\n", args...)
-// 	printPromptLine()
 // }
