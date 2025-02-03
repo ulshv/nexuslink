@@ -93,7 +93,7 @@ func (lp *LogPrompt) Log(message string, args ...any) {
 
 func (lp *LogPrompt) printPromptLine() {
 	fmt.Print(CLEAR_LINE)
-	fmt.Printf(lp.prompt + lp.currInput)
+	fmt.Print(lp.prompt + lp.currInput)
 	lp.isLastPrompt = true
 }
 

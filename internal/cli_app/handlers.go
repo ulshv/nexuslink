@@ -8,10 +8,13 @@ import (
 	"github.com/ulshv/nexuslink/internal/tcp"
 )
 
-func helloHandler(args []string) {
+func helloHandler(_ []string) {
 	fmt.Println(`Available commands:
-- start <port>: Start a server
-- connect <port> [<host> (optional, default 'localhost')]: Connect to a server
+- start <port>: Start a new server
+- connect <host:port>: Connect to a server
+	Exmaples:
+		'connect tcp-chat.example.com:5000' (remote server)
+		'connect :5000' (localhost)
 - [TODO] nickname <server_uuid> <nickname>: Reserve a nickname on the server
 - [TODO] create_room <server_uuid> <room_name>: Create a room in the server
 - [TODO] list: List all connected servers
