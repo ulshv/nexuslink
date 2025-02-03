@@ -17,7 +17,19 @@ Later app implementations could be something like:
 - p2p TCP tunneling
 - p2p Decentralized DNS for pub keys
 
-Nodes (clients as well as servers) later could be identified not only by <ip/domain>:<port>,
+Or even something like:
+- p2p custom AI Assistants/Agents running on user's computer and data (via something like `ollama` with a knowledge RAG)
+  and their communication in p2p-manner with another AIs and users
+- p2p decentralized blockchain networks, building DeFi platforms to serve local communities
+- the list goes on
+
+Yes, I know, there's existing tech for all of that but this world deserves diversity in tech and ideas!
+And mainly, I'm doing all of this for myself in the first place (with learning/practice goal in mind)
+rather to raise a lot of $$$ in funding or to implement features needed for some specific companies.
+
+# Later
+
+Nodes (clients as well as servers) later could be identified not only by `<ip/domain>:<port>`,
 but also by 256-bit hash of their public keys
 in a Decentralized hash-based DNS system.
 
@@ -26,13 +38,13 @@ in a Decentralized hash-based DNS system.
 Initially my dream was to build a new internet (as they called it in Silicon Valley HBO)
 built on a decetralized LoRa-based radio mesh network (like `Reticulum`).
 But then I realized that there's almost zero radio enthusiast in my local area,
-so it felt that I would be the only guy in such network...
+so I felt that I would be the only guy in such a network...
 
 So then I came up with an idea - why no use the existing networking tech (like the Internet)
 to build a network of inter-connected devices? It's when I came up with the idea of a decentralized p2p `tcp-chat`.
 
 As the NexusLink project evolves, my goal is to continue adding the packages/software in this monorepo
-for creation of p2p apps.
+for creation of decentralized p2p apps.
 
 # TODO/WIP/DONE
 
