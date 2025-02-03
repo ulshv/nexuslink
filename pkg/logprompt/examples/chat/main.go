@@ -44,7 +44,7 @@ func main() {
 	go func() {
 		currUser := "admin"
 
-		for msg := range lp.Channel() {
+		for msg := range lp.Prompts() {
 			lp.Log("[%s@0.0.0.0:5000]: %s", currUser, msg)
 		}
 	}()

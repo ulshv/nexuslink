@@ -17,7 +17,7 @@ type LogPrompt struct {
 	prompt       string
 	currInput    string
 	isLastPrompt bool
-	ch           chan string
+	promptsCh    chan string
 	ctx          context.Context
 }
 
@@ -26,13 +26,13 @@ func NewLogPrompt(ctx context.Context, prompt string) *LogPrompt {
 		prompt:       prompt,
 		currInput:    "",
 		isLastPrompt: false,
-		ch:           make(chan string),
+		promptsCh:    make(chan string),
 		ctx:          ctx,
 	}
 }
 
-func (lp *LogPrompt) Channel() <-chan string {
-	return lp.ch
+func (lp *LogPrompt) Prompts() <-chan string {
+	return lp.promptsCh
 }
 
 func (lp *LogPrompt) Start() {
@@ -42,6 +42,8 @@ func (lp *LogPrompt) Start() {
 		fmt.Println("Failed to set raw mode:", err)
 		return
 	}
+	// Make initial prompt line
+	lp.printPromptLine()
 	// Ensure we restore terminal state on exit
 	defer restoreTerminalState(oldTermState)
 	// Buffer for UTF-8/32 bit characters
@@ -56,14 +58,18 @@ func (lp *LogPrompt) Start() {
 		}
 		// Handle key strokes
 		switch char {
-		case 3, 4: // Ctrl+C, Ctrl+D
-			restoreTerminalState(oldTermState) // Restore terminal state before exiting
+		case 3: // Ctrl+C
+			lp.Log("Ctrl+C received, run Ctrl+D to exit.")
+			lp.currInput = ""
+			lp.printPromptLine()
+		case 4: // Ctrl+D
 			lp.Log("Exiting the program.")
+			restoreTerminalState(oldTermState) // Restore terminal state before exiting
 			os.Exit(0)
 		case '\n', 13: // Enter
 			lp.Log(lp.prompt + lp.currInput)
 			// send currInput to the channel
-			lp.ch <- lp.currInput
+			lp.promptsCh <- lp.currInput
 			lp.currInput = ""
 			lp.printPromptLine()
 		case '\b', 127: // Backspace
