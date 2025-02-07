@@ -7,15 +7,15 @@ import (
 	"github.com/ulshv/nexuslink/internal/pb"
 )
 
-func HandleServerSideCommands(ctx context.Context, ch <-chan *pb.TCPCommand, conn ClientConnection) {
+func HandleServerSideCommands(ctx context.Context, ch <-chan *pb.TCPMessage, conn ClientConnection) {
 	for {
 		select {
 		case command := <-ch:
-			fmt.Printf("[info]: received command on the server: %s\n", command.Command)
-			switch command.Command {
+			fmt.Printf("[info]: received command on the server: %s\n", command.Type)
+			switch command.Type {
 			case CommandClientInit:
-				SendMessage(conn, &pb.TCPCommand{
-					Command: CommandServerInit,
+				SendMessage(conn, &pb.TCPMessage{
+					Type:    CommandServerInit,
 					Payload: []byte{},
 				})
 			}
@@ -25,12 +25,12 @@ func HandleServerSideCommands(ctx context.Context, ch <-chan *pb.TCPCommand, con
 	}
 }
 
-func HandleClientSideCommands(ctx context.Context, ch <-chan *pb.TCPCommand, conn ServerConnection) {
+func HandleClientSideCommands(ctx context.Context, ch <-chan *pb.TCPMessage, conn ServerConnection) {
 	for {
 		select {
 		case command := <-ch:
-			fmt.Printf("[info]: received command on the client: %s\n", command.Command)
-			switch command.Command {
+			fmt.Printf("[info]: received command on the client: %s\n", command.Type)
+			switch command.Type {
 			case CommandServerInit:
 				fmt.Println("[info]: server notified that it's initialized for the current client")
 			}

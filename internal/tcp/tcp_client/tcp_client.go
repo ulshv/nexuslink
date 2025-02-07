@@ -3,27 +3,23 @@ package tcp_client
 import (
 	"fmt"
 	"net"
-	// "github.com/ulshv/nexuslink/internal/pb"
+
+	"github.com/ulshv/nexuslink/internal/pb"
 )
 
 type ServerConnection struct {
-	Conn net.Conn
-	// commandsCh chan *pb.TCPCommand
+	conn       net.Conn
+	messagesCh chan *pb.TCPMessage
 }
 
-type NewClientConfig struct {
-	ServerHost string
-	ServerPort string
-}
-
-func NewServerConnection(config NewClientConfig) (*ServerConnection, error) {
+func NewServerConnection(host string, port int) (*ServerConnection, error) {
 	// connect to the server
-	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", config.ServerHost, config.ServerPort))
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%v", host, port))
 	if err != nil {
-		return nil, fmt.Errorf("[error]: failed to connect to server: %v", err)
+		return nil, fmt.Errorf("failed to connect to the server: %v", err)
 	}
 	return &ServerConnection{
-		Conn: conn,
+		conn: conn,
 		// MessagesCh: make(chan *pb.TCPCommand),
 	}, nil
 }
@@ -32,11 +28,15 @@ func NewServerConnection(config NewClientConfig) (*ServerConnection, error) {
 // 	go ReadMessagesLoop(messagesCh, conn)
 // }
 
+func (c *ServerConnection) ListenAndHandle() {
+
+}
+
 func (c *ServerConnection) Close() error {
-	return c.Conn.Close()
+	return c.conn.Close()
 }
 
 // implements NetConnection interface
-func (c ServerConnection) Connection() net.Conn {
-	return c.Conn
+func (c *ServerConnection) Connection() net.Conn {
+	return c.conn
 }

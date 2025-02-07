@@ -24,11 +24,6 @@ type ClientConnection struct {
 // 	Password string
 // }
 
-type NewServerConfig struct {
-	Host string
-	Port string
-}
-
 func NewServer(host string, port int) *Server {
 	if host == "" {
 		host = "0.0.0.0"
@@ -55,11 +50,12 @@ func (s *Server) ListenAndHandle() {
 			slog.Error("failed to accept new client connection: %v", err)
 			continue
 		}
-		slog.Info("new connection", "conn", conn)
-		client := ClientConnection{
-			conn: conn,
-		}
-		slog.Info("new client", "client", client)
+		slog.Info("new connection", "remote_addr", conn.RemoteAddr())
+		// client := ClientConnection{
+		// 	conn: conn,
+		// }
+
+		// slog.Info("new client", "client", client)
 		// // server commands handler
 		// go HandleServerSideCommands(context.Background(), server.messagesCh, client)
 		// // read messages from the client (curent `conn`)

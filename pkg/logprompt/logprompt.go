@@ -59,7 +59,7 @@ func (lp *LogPrompt) Start() {
 		// Handle key strokes
 		switch char {
 		case 3: // Ctrl+C
-			lp.Log("Ctrl+C received, run Ctrl+D to exit.")
+			lp.Log("Ctrl+C received, press Ctrl+D to exit.")
 			lp.currInput = ""
 			lp.printPromptLine()
 		case 4: // Ctrl+D

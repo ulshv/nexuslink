@@ -12,7 +12,7 @@ import (
 type Server struct {
 	host       string
 	port       string
-	messagesCh chan *pb.TCPCommand
+	messagesCh chan *pb.TCPMessage
 }
 
 type ClientConnection struct {
@@ -34,7 +34,7 @@ func NewServer(config *NewServerConfig) *Server {
 	return &Server{
 		host:       config.Host,
 		port:       config.Port,
-		messagesCh: make(chan *pb.TCPCommand),
+		messagesCh: make(chan *pb.TCPMessage),
 	}
 }
 

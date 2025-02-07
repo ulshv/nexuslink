@@ -10,7 +10,7 @@ import (
 
 type ServerConnection struct {
 	Conn       net.Conn
-	MessagesCh chan *pb.TCPCommand
+	MessagesCh chan *pb.TCPMessage
 }
 
 type NewClientConfig struct {
@@ -26,11 +26,11 @@ func NewServerConnection(config NewClientConfig) (*ServerConnection, error) {
 	}
 	return &ServerConnection{
 		Conn:       conn,
-		MessagesCh: make(chan *pb.TCPCommand),
+		MessagesCh: make(chan *pb.TCPMessage),
 	}, nil
 }
 
-func RunClient(ctx context.Context, messagesCh chan<- *pb.TCPCommand, conn ServerConnection) {
+func RunClient(ctx context.Context, messagesCh chan<- *pb.TCPMessage, conn ServerConnection) {
 	go ReadMessagesLoop(messagesCh, conn)
 }
 

@@ -11,24 +11,24 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func SendMessage(conn NetConnection, command *pb.TCPCommand) error {
+func SendMessage(conn NetConnection, message *pb.TCPMessage) error {
 	// Marshal command to bytes
-	data, err := proto.Marshal(command)
+	data, err := proto.Marshal(message)
 	if err != nil {
 		return fmt.Errorf("failed to marshal command: %w", err)
 	}
 	// Create prefix with data's length (in bytes)
 	prefix := []byte(fmt.Sprintf("protobuf(%d):", len(data)))
 	// Combine prefix + protobuf data
-	message := append(prefix, data...)
-	_, err = conn.Connection().Write(message)
+	msg := append(prefix, data...)
+	_, err = conn.Connection().Write(msg)
 	if err != nil {
 		return fmt.Errorf("[error]: failed to send message: %w", err)
 	}
 	return nil
 }
 
-func ReadMessagesLoop(ch chan<- *pb.TCPCommand, conn NetConnection) {
+func ReadMessagesLoop(ch chan<- *pb.TCPMessage, conn NetConnection) {
 	reader := bufio.NewReader(conn.Connection())
 	for {
 		// Read until we find the closing ":" part of the "protobuf(%d):" prefix
@@ -62,18 +62,18 @@ func ReadMessagesLoop(ch chan<- *pb.TCPCommand, conn NetConnection) {
 			fmt.Printf("[error]: failed to read message body: %v\n", err)
 			return
 		}
-		// Try to unmarshal the data into a TCPCommand
-		command := &pb.TCPCommand{}
-		err = proto.Unmarshal(data, command)
+		// Try to unmarshal the data into a TCPMessage
+		message := &pb.TCPMessage{}
+		err = proto.Unmarshal(data, message)
 		if err != nil {
 			fmt.Printf("[error]: failed to unmarshal message: %v\n", err)
 			return
 		}
 		fmt.Printf(
-			"[info]: received command `%s` with payload size of %d bytes.\n",
-			command.Command,
-			len(command.Payload),
+			"[info]: received message `%s` with payload size of %d bytes.\n",
+			message.Type,
+			len(message.Payload),
 		)
-		ch <- command
+		ch <- message
 	}
 }

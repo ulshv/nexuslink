@@ -3,9 +3,13 @@ syntax = "proto3";
 package proto;
 option go_package = "internal/pb";
 
-message TCPCommand {
-  string command = 1;
-  bytes payload = 2;
+message CommandClientHandshake {
+  bytes public_key = 1;
+  bytes commont_key_encrypted = 2;
+}
+
+message CommandServerHandshake {
+  bytes public_key = 1;
 }
 
 message CommandClientLogin {

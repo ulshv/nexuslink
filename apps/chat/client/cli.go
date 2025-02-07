@@ -14,11 +14,13 @@ func handlePrompt(client *ChatClient, prompt string) {
 	}
 	// extract command and params
 	command := params[0]
-	_ = params[1:]
+	params = params[1:]
 	// handle commands
 	switch command {
 	case "help":
 		handleHelp(client)
+	case "connect":
+		handleConnect(client, params)
 	default:
 		handleUnknownCommand(client, command)
 	}

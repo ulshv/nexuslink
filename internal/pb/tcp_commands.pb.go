@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.4
 // 	protoc        v5.26.1
-// source: tcp_messages.proto
+// source: tcp_commands.proto
 
 package pb
 
@@ -21,29 +21,28 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type TCPCommand struct {
+type CommandClientHandshake struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Command       string                 `protobuf:"bytes,1,opt,name=command,proto3" json:"command,omitempty"`
-	Payload       []byte                 `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
+	PublicKey     []byte                 `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TCPCommand) Reset() {
-	*x = TCPCommand{}
-	mi := &file_tcp_messages_proto_msgTypes[0]
+func (x *CommandClientHandshake) Reset() {
+	*x = CommandClientHandshake{}
+	mi := &file_tcp_commands_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TCPCommand) String() string {
+func (x *CommandClientHandshake) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TCPCommand) ProtoMessage() {}
+func (*CommandClientHandshake) ProtoMessage() {}
 
-func (x *TCPCommand) ProtoReflect() protoreflect.Message {
-	mi := &file_tcp_messages_proto_msgTypes[0]
+func (x *CommandClientHandshake) ProtoReflect() protoreflect.Message {
+	mi := &file_tcp_commands_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,21 +53,58 @@ func (x *TCPCommand) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TCPCommand.ProtoReflect.Descriptor instead.
-func (*TCPCommand) Descriptor() ([]byte, []int) {
-	return file_tcp_messages_proto_rawDescGZIP(), []int{0}
+// Deprecated: Use CommandClientHandshake.ProtoReflect.Descriptor instead.
+func (*CommandClientHandshake) Descriptor() ([]byte, []int) {
+	return file_tcp_commands_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *TCPCommand) GetCommand() string {
+func (x *CommandClientHandshake) GetPublicKey() []byte {
 	if x != nil {
-		return x.Command
+		return x.PublicKey
 	}
-	return ""
+	return nil
 }
 
-func (x *TCPCommand) GetPayload() []byte {
+type CommandServerHandshake struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PublicKey     []byte                 `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CommandServerHandshake) Reset() {
+	*x = CommandServerHandshake{}
+	mi := &file_tcp_commands_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommandServerHandshake) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommandServerHandshake) ProtoMessage() {}
+
+func (x *CommandServerHandshake) ProtoReflect() protoreflect.Message {
+	mi := &file_tcp_commands_proto_msgTypes[1]
 	if x != nil {
-		return x.Payload
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommandServerHandshake.ProtoReflect.Descriptor instead.
+func (*CommandServerHandshake) Descriptor() ([]byte, []int) {
+	return file_tcp_commands_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *CommandServerHandshake) GetPublicKey() []byte {
+	if x != nil {
+		return x.PublicKey
 	}
 	return nil
 }
@@ -83,7 +119,7 @@ type CommandClientLogin struct {
 
 func (x *CommandClientLogin) Reset() {
 	*x = CommandClientLogin{}
-	mi := &file_tcp_messages_proto_msgTypes[1]
+	mi := &file_tcp_commands_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -95,7 +131,7 @@ func (x *CommandClientLogin) String() string {
 func (*CommandClientLogin) ProtoMessage() {}
 
 func (x *CommandClientLogin) ProtoReflect() protoreflect.Message {
-	mi := &file_tcp_messages_proto_msgTypes[1]
+	mi := &file_tcp_commands_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -108,7 +144,7 @@ func (x *CommandClientLogin) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandClientLogin.ProtoReflect.Descriptor instead.
 func (*CommandClientLogin) Descriptor() ([]byte, []int) {
-	return file_tcp_messages_proto_rawDescGZIP(), []int{1}
+	return file_tcp_commands_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CommandClientLogin) GetUsername() string {
@@ -135,7 +171,7 @@ type CommandClientRegister struct {
 
 func (x *CommandClientRegister) Reset() {
 	*x = CommandClientRegister{}
-	mi := &file_tcp_messages_proto_msgTypes[2]
+	mi := &file_tcp_commands_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -147,7 +183,7 @@ func (x *CommandClientRegister) String() string {
 func (*CommandClientRegister) ProtoMessage() {}
 
 func (x *CommandClientRegister) ProtoReflect() protoreflect.Message {
-	mi := &file_tcp_messages_proto_msgTypes[2]
+	mi := &file_tcp_commands_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -160,7 +196,7 @@ func (x *CommandClientRegister) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandClientRegister.ProtoReflect.Descriptor instead.
 func (*CommandClientRegister) Descriptor() ([]byte, []int) {
-	return file_tcp_messages_proto_rawDescGZIP(), []int{2}
+	return file_tcp_commands_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CommandClientRegister) GetUsername() string {
@@ -186,7 +222,7 @@ type CommandServerLoginSuccess struct {
 
 func (x *CommandServerLoginSuccess) Reset() {
 	*x = CommandServerLoginSuccess{}
-	mi := &file_tcp_messages_proto_msgTypes[3]
+	mi := &file_tcp_commands_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -198,7 +234,7 @@ func (x *CommandServerLoginSuccess) String() string {
 func (*CommandServerLoginSuccess) ProtoMessage() {}
 
 func (x *CommandServerLoginSuccess) ProtoReflect() protoreflect.Message {
-	mi := &file_tcp_messages_proto_msgTypes[3]
+	mi := &file_tcp_commands_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -211,7 +247,7 @@ func (x *CommandServerLoginSuccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandServerLoginSuccess.ProtoReflect.Descriptor instead.
 func (*CommandServerLoginSuccess) Descriptor() ([]byte, []int) {
-	return file_tcp_messages_proto_rawDescGZIP(), []int{3}
+	return file_tcp_commands_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CommandServerLoginSuccess) GetUsername() string {
@@ -230,7 +266,7 @@ type CommandServerLoginFailed struct {
 
 func (x *CommandServerLoginFailed) Reset() {
 	*x = CommandServerLoginFailed{}
-	mi := &file_tcp_messages_proto_msgTypes[4]
+	mi := &file_tcp_commands_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -242,7 +278,7 @@ func (x *CommandServerLoginFailed) String() string {
 func (*CommandServerLoginFailed) ProtoMessage() {}
 
 func (x *CommandServerLoginFailed) ProtoReflect() protoreflect.Message {
-	mi := &file_tcp_messages_proto_msgTypes[4]
+	mi := &file_tcp_commands_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -255,7 +291,7 @@ func (x *CommandServerLoginFailed) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandServerLoginFailed.ProtoReflect.Descriptor instead.
 func (*CommandServerLoginFailed) Descriptor() ([]byte, []int) {
-	return file_tcp_messages_proto_rawDescGZIP(), []int{4}
+	return file_tcp_commands_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CommandServerLoginFailed) GetUsername() string {
@@ -274,7 +310,7 @@ type CommandServerRegisterSuccess struct {
 
 func (x *CommandServerRegisterSuccess) Reset() {
 	*x = CommandServerRegisterSuccess{}
-	mi := &file_tcp_messages_proto_msgTypes[5]
+	mi := &file_tcp_commands_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -286,7 +322,7 @@ func (x *CommandServerRegisterSuccess) String() string {
 func (*CommandServerRegisterSuccess) ProtoMessage() {}
 
 func (x *CommandServerRegisterSuccess) ProtoReflect() protoreflect.Message {
-	mi := &file_tcp_messages_proto_msgTypes[5]
+	mi := &file_tcp_commands_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -299,7 +335,7 @@ func (x *CommandServerRegisterSuccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandServerRegisterSuccess.ProtoReflect.Descriptor instead.
 func (*CommandServerRegisterSuccess) Descriptor() ([]byte, []int) {
-	return file_tcp_messages_proto_rawDescGZIP(), []int{5}
+	return file_tcp_commands_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CommandServerRegisterSuccess) GetUsername() string {
@@ -318,7 +354,7 @@ type CommandServerRegisterFailed struct {
 
 func (x *CommandServerRegisterFailed) Reset() {
 	*x = CommandServerRegisterFailed{}
-	mi := &file_tcp_messages_proto_msgTypes[6]
+	mi := &file_tcp_commands_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -330,7 +366,7 @@ func (x *CommandServerRegisterFailed) String() string {
 func (*CommandServerRegisterFailed) ProtoMessage() {}
 
 func (x *CommandServerRegisterFailed) ProtoReflect() protoreflect.Message {
-	mi := &file_tcp_messages_proto_msgTypes[6]
+	mi := &file_tcp_commands_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -343,7 +379,7 @@ func (x *CommandServerRegisterFailed) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommandServerRegisterFailed.ProtoReflect.Descriptor instead.
 func (*CommandServerRegisterFailed) Descriptor() ([]byte, []int) {
-	return file_tcp_messages_proto_rawDescGZIP(), []int{6}
+	return file_tcp_commands_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CommandServerRegisterFailed) GetUsername() string {
@@ -353,15 +389,18 @@ func (x *CommandServerRegisterFailed) GetUsername() string {
 	return ""
 }
 
-var File_tcp_messages_proto protoreflect.FileDescriptor
+var File_tcp_commands_proto protoreflect.FileDescriptor
 
-var file_tcp_messages_proto_rawDesc = string([]byte{
-	0x0a, 0x12, 0x74, 0x63, 0x70, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x40, 0x0a, 0x0a, 0x54,
-	0x43, 0x50, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6d,
-	0x6d, 0x61, 0x6e, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6d, 0x6d,
-	0x61, 0x6e, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x0c, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0x4c, 0x0a,
+var file_tcp_commands_proto_rawDesc = string([]byte{
+	0x0a, 0x12, 0x74, 0x63, 0x70, 0x5f, 0x63, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x73, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x37, 0x0a, 0x16, 0x43,
+	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x48, 0x61, 0x6e, 0x64,
+	0x73, 0x68, 0x61, 0x6b, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x5f,
+	0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x09, 0x70, 0x75, 0x62, 0x6c, 0x69,
+	0x63, 0x4b, 0x65, 0x79, 0x22, 0x37, 0x0a, 0x16, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x53,
+	0x65, 0x72, 0x76, 0x65, 0x72, 0x48, 0x61, 0x6e, 0x64, 0x73, 0x68, 0x61, 0x6b, 0x65, 0x12, 0x1d,
+	0x0a, 0x0a, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x5f, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0c, 0x52, 0x09, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x4b, 0x65, 0x79, 0x22, 0x4c, 0x0a,
 	0x12, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x4c, 0x6f,
 	0x67, 0x69, 0x6e, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x12,
@@ -391,28 +430,29 @@ var file_tcp_messages_proto_rawDesc = string([]byte{
 })
 
 var (
-	file_tcp_messages_proto_rawDescOnce sync.Once
-	file_tcp_messages_proto_rawDescData []byte
+	file_tcp_commands_proto_rawDescOnce sync.Once
+	file_tcp_commands_proto_rawDescData []byte
 )
 
-func file_tcp_messages_proto_rawDescGZIP() []byte {
-	file_tcp_messages_proto_rawDescOnce.Do(func() {
-		file_tcp_messages_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_tcp_messages_proto_rawDesc), len(file_tcp_messages_proto_rawDesc)))
+func file_tcp_commands_proto_rawDescGZIP() []byte {
+	file_tcp_commands_proto_rawDescOnce.Do(func() {
+		file_tcp_commands_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_tcp_commands_proto_rawDesc), len(file_tcp_commands_proto_rawDesc)))
 	})
-	return file_tcp_messages_proto_rawDescData
+	return file_tcp_commands_proto_rawDescData
 }
 
-var file_tcp_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
-var file_tcp_messages_proto_goTypes = []any{
-	(*TCPCommand)(nil),                   // 0: proto.TCPCommand
-	(*CommandClientLogin)(nil),           // 1: proto.CommandClientLogin
-	(*CommandClientRegister)(nil),        // 2: proto.CommandClientRegister
-	(*CommandServerLoginSuccess)(nil),    // 3: proto.CommandServerLoginSuccess
-	(*CommandServerLoginFailed)(nil),     // 4: proto.CommandServerLoginFailed
-	(*CommandServerRegisterSuccess)(nil), // 5: proto.CommandServerRegisterSuccess
-	(*CommandServerRegisterFailed)(nil),  // 6: proto.CommandServerRegisterFailed
+var file_tcp_commands_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_tcp_commands_proto_goTypes = []any{
+	(*CommandClientHandshake)(nil),       // 0: proto.CommandClientHandshake
+	(*CommandServerHandshake)(nil),       // 1: proto.CommandServerHandshake
+	(*CommandClientLogin)(nil),           // 2: proto.CommandClientLogin
+	(*CommandClientRegister)(nil),        // 3: proto.CommandClientRegister
+	(*CommandServerLoginSuccess)(nil),    // 4: proto.CommandServerLoginSuccess
+	(*CommandServerLoginFailed)(nil),     // 5: proto.CommandServerLoginFailed
+	(*CommandServerRegisterSuccess)(nil), // 6: proto.CommandServerRegisterSuccess
+	(*CommandServerRegisterFailed)(nil),  // 7: proto.CommandServerRegisterFailed
 }
-var file_tcp_messages_proto_depIdxs = []int32{
+var file_tcp_commands_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -420,26 +460,26 @@ var file_tcp_messages_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_tcp_messages_proto_init() }
-func file_tcp_messages_proto_init() {
-	if File_tcp_messages_proto != nil {
+func init() { file_tcp_commands_proto_init() }
+func file_tcp_commands_proto_init() {
+	if File_tcp_commands_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_tcp_messages_proto_rawDesc), len(file_tcp_messages_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_tcp_commands_proto_rawDesc), len(file_tcp_commands_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_tcp_messages_proto_goTypes,
-		DependencyIndexes: file_tcp_messages_proto_depIdxs,
-		MessageInfos:      file_tcp_messages_proto_msgTypes,
+		GoTypes:           file_tcp_commands_proto_goTypes,
+		DependencyIndexes: file_tcp_commands_proto_depIdxs,
+		MessageInfos:      file_tcp_commands_proto_msgTypes,
 	}.Build()
-	File_tcp_messages_proto = out.File
-	file_tcp_messages_proto_goTypes = nil
-	file_tcp_messages_proto_depIdxs = nil
+	File_tcp_commands_proto = out.File
+	file_tcp_commands_proto_goTypes = nil
+	file_tcp_commands_proto_depIdxs = nil
 }
