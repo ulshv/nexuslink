@@ -1,3 +1,4 @@
+```go
 package cli_app
 
 import (
@@ -80,3 +81,4 @@ func loginHandler(args []string) {
 	nickname := args[0]
 	fmt.Printf("[info]: logging in as %s\n", nickname)
 }
+```

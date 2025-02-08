@@ -1,3 +1,4 @@
+```go
 package cli_app
 
 import (
@@ -39,3 +40,4 @@ func CommandsWorker(ctx context.Context, wg *sync.WaitGroup, ch chan Command, cl
 		}
 	}
 }
+```

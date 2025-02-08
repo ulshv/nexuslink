@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ulshv/nexuslink/internal/tcp/tcp_client"
+	"github.com/ulshv/nexuslink/pkg/tcp/tcp_client"
 )
 
 func handleConnect(client *ChatClient, params []string) {

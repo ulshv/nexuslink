@@ -3,10 +3,8 @@ package main
 import (
 	"context"
 
-	"github.com/ulshv/nexuslink/internal/pb"
-	"github.com/ulshv/nexuslink/internal/tcp"
-	"github.com/ulshv/nexuslink/internal/tcp/tcp_client"
 	"github.com/ulshv/nexuslink/pkg/logprompt"
+	"github.com/ulshv/nexuslink/pkg/tcp/tcp_client"
 )
 
 type ChatClient struct {
@@ -53,8 +51,8 @@ func (c *ChatClient) sendMessage(message []byte) {
 		c.lp.Log("No server connection. Type 'connect <host:port>' to connect to a server first.")
 		return
 	}
-	tcp.SendMessage(c.serverConn, &pb.TCPMessage{
-		Type:    "hello",
-		Payload: message,
-	})
+	// tcp.PublishMessage(c.serverConn, &pb.TCPMessage{
+	// 	Type:    "hello",
+	// 	Payload: message,
+	// })
 }

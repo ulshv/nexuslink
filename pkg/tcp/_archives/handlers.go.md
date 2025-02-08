@@ -1,3 +1,4 @@
+```go
 package tcp
 
 import (
@@ -14,7 +15,7 @@ func HandleServerSideCommands(ctx context.Context, ch <-chan *pb.TCPMessage, con
 			fmt.Printf("[info]: received command on the server: %s\n", command.Type)
 			switch command.Type {
 			case CommandClientInit:
-				SendMessage(conn, &pb.TCPMessage{
+				PublishMessage(conn, &pb.TCPMessage{
 					Type:    CommandServerInit,
 					Payload: []byte{},
 				})
@@ -39,3 +40,4 @@ func HandleClientSideCommands(ctx context.Context, ch <-chan *pb.TCPMessage, con
 		}
 	}
 }
+```

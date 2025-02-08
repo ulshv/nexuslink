@@ -1,3 +1,4 @@
+```go
 package tcp
 
 import (
@@ -70,3 +71,4 @@ func (server *Server) RunServer() {
 func (s ClientConnection) Connection() net.Conn {
 	return s.conn
 }
+```

@@ -1,3 +1,4 @@
+```go
 package cli_app
 
 import (
@@ -83,33 +84,34 @@ func (c *CLI) Log(format string, args ...interface{}) {
 	fmt.Print(c.prompt + c.inputLine)
 }
 
-// func ReadCommandsLoopV1(commandCh chan Command) {
-// 	for {
-// 		time.Sleep(100 * time.Millisecond) // make the `>` appear after the previous log from goroutine
-// 		reader := bufio.NewReader(os.Stdin)
-// 		fmt.Print("> ")
-// 		inputText, err := reader.ReadString('\n')
+func ReadCommandsLoopV1(commandCh chan Command) {
+	for {
+		time.Sleep(100 * time.Millisecond) // make the `>` appear after the previous log from goroutine
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("> ")
+		inputText, err := reader.ReadString('\n')
 
-// 		if err != nil {
-// 			fmt.Printf("[error]: readCommandsLoop: failed to read input: %v\n", err)
-// 			continue
-// 		}
+		if err != nil {
+			fmt.Printf("[error]: readCommandsLoop: failed to read input: %v\n", err)
+			continue
+		}
 
-// 		cleanStr := strings.Trim(inputText, " \n")
-// 		params := strings.Split(cleanStr, " ")
+		cleanStr := strings.Trim(inputText, " \n")
+		params := strings.Split(cleanStr, " ")
 
-// 		fmt.Println("[debug]: readCommandsLoop: user input:", cleanStr)
+		fmt.Println("[debug]: readCommandsLoop: user input:", cleanStr)
 
-// 		if len(params) == 0 {
-// 			fmt.Println("[error]: readCommandsLoop: no command provided")
-// 			continue
-// 		}
+		if len(params) == 0 {
+			fmt.Println("[error]: readCommandsLoop: no command provided")
+			continue
+		}
 
-// 		command := Command{
-// 			Command: params[0],
-// 			Args:    params[1:],
-// 		}
+		command := Command{
+			Command: params[0],
+			Args:    params[1:],
+		}
 
-// 		commandCh <- command
-// 	}
+		commandCh <- command
+	}
 // }
+```

@@ -1,3 +1,4 @@
+```go
 package cli_app
 
 type Command struct {
@@ -8,3 +9,4 @@ type Command struct {
 type CommandHandler func(cli *CLI, args []string)
 
 type CommandHandlers map[string]CommandHandler
+```

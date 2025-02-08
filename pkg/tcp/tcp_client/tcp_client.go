@@ -29,7 +29,14 @@ func NewServerConnection(host string, port int) (*ServerConnection, error) {
 // }
 
 func (c *ServerConnection) ListenAndHandle() {
-
+	// TODO. legacy cli_app impl as a reference:
+	// // Run goroutine to read messages from the server
+	// go tcp.RunClient(context.Background(), sConn.MessagesCh, *sConn)
+	// // Send the client init command to the server
+	// go tcp.SendMessage(sConn, &pb.TCPCommand{
+	// 	Command: tcp.CommandClientInit,
+	// 	Payload: []byte{},
+	// })
 }
 
 func (c *ServerConnection) Close() error {

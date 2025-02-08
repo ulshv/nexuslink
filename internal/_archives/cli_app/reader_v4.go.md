@@ -1,3 +1,4 @@
+```go
 package cli_app
 
 import (
@@ -86,3 +87,4 @@ func makeTerminalRaw() (*term.State, error) {
 func restoreTerminalState(state *term.State) error {
 	return term.Restore(int(os.Stdin.Fd()), state)
 }
+```

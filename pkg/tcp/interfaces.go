@@ -1,6 +1,8 @@
 package tcp
 
-import "net"
+import (
+	"net"
+)
 
 type NetConnection interface {
 	Connection() net.Conn
