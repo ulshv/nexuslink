@@ -1,9 +1,9 @@
 syntax = "proto3";
 
 package proto;
-option go_package = "pkg/proto_stream/pb";
+option go_package = "pkg/tcp_message/pb";
 
-message TCPMessage {
+message TCPMessagePayload {
   string type = 1; // `ping`, `tcp_handshake`, `message`, `encrypted_message`, etc.
   bytes payload = 2;
 }

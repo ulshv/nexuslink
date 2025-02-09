@@ -1,3 +1,4 @@
+```go
 package tcp_server
 
 import (
@@ -33,3 +34,4 @@ func (c *clientConnection) Write(b []byte) (int, error) {
 	}
 	return n, nil
 }
+```

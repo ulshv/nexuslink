@@ -1,3 +1,4 @@
+```go
 package tcp_server
 
 import (
@@ -96,3 +97,4 @@ func (s *Server) pingClientLoop(ctx context.Context, conn net.Conn) {
 		}
 	}()
 }
+```

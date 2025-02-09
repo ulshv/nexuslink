@@ -1,3 +1,4 @@
+```go
 package tcp_client
 
 import (
@@ -47,3 +48,4 @@ func (c *ServerConnection) Close() error {
 func (c *ServerConnection) Connection() net.Conn {
 	return c.conn
 }
+```
