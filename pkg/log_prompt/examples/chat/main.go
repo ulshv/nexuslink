@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ulshv/nexuslink/pkg/logprompt"
+	"github.com/ulshv/nexuslink/pkg/log_prompt"
 )
 
 var (
@@ -30,7 +30,7 @@ func randomMessage() string {
 
 func main() {
 	wg := &sync.WaitGroup{}
-	lp := logprompt.NewLogPrompt(context.Background(), "> ")
+	lp := log_prompt.NewLogPrompt(context.Background(), "> ")
 
 	wg.Add(2)
 

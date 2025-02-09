@@ -1,4 +1,4 @@
-package logprompt
+package log_prompt
 
 import (
 	"context"
