@@ -27,7 +27,6 @@ type TCPMessage []byte
 
 var newMsgLogger = logger.NewLogger("tcp_message/new_message")
 var readMsgLogger = logger.NewLogger("tcp_message/read_messages")
-var readMsgHeaderLogger = logger.NewLogger("tcp_message/read_messages_header")
 
 const (
 	messageHeaderPrefix = "_protobuf_("
@@ -37,16 +36,13 @@ const (
 
 func NewTCPMessage(payload *pb.TCPMessagePayload) (TCPMessage, error) {
 	newMsgLogger.Debug("NewTCPMessage", "message", payload)
-	// Marshal payload to bytes
 	data, err := proto.Marshal(payload)
 	newMsgLogger.Debug("Marshalled payload to bytes", "bytes", len(data), "error", err)
 	if err != nil {
 		newMsgLogger.Error("Failed to marshal payload", "error", err)
 		return nil, fmt.Errorf("failed to marshal payload: %w", err)
 	}
-	// Create prefix with data's length (in bytes)
 	header := []byte(fmt.Sprintf("%s%d%s", messageHeaderPrefix, len(data), messageHeaderSuffix))
-	// Combine prefix + protobuf data
 	msg := append(header, data...)
 	newMsgLogger.Debug("Made TCPMessage, returning", "bytes", len(msg))
 	return msg, nil
@@ -59,8 +55,6 @@ func ReadTCPMessagesLoop(
 ) {
 	readMsgLogger.Info("ReadTCPMessages")
 	reader := bufio.NewReader(r)
-	// messageHeadersCh := make(chan []byte)
-	// go readTCPMessageHeadersLoop(ctx, messageHeadersCh, reader)
 	readBytesEofCounter := 0
 	lastReadBytesPauseInterval := time.Duration(0)
 	for {
@@ -69,11 +63,6 @@ func ReadTCPMessagesLoop(
 			readMsgLogger.Info("context cancelled, closing channel and exiting ReadTCPMessagesLoop")
 			close(ch)
 			return
-		// case messageHeader, ok := <-messageHeadersCh:
-		// 	if !ok {
-		// 		readMsgLogger.Info("messageHeadersCh closed, exiting ReadTCPMessagesLoop")
-		// 		return
-		// 	}
 		default:
 			// readMsgLogger.Debug("waiting for the next ':' byte in the buffer...")
 
@@ -163,36 +152,6 @@ func ReadTCPMessagesLoop(
 		}
 	}
 }
-
-// func readTCPMessageHeadersLoop(ctx context.Context, ch chan []byte, reader *bufio.Reader) {
-// 	defer close(ch)
-
-// 	eofCounter := 0
-
-// 	for {
-// 		select {
-// 		case <-ctx.Done():
-// 			return
-// 		default:
-// 			readMsgHeaderLogger.Info("waiting for the next ':' byte in the buffer...")
-// 			messageHeader, err := reader.ReadBytes(':')
-// 			if err != nil {
-// 				if err == io.EOF {
-// 					eofCounter++
-// 					readMsgHeaderLogger.Info("reader.ReadBytes() - EOF")
-// 					pauseInterval := getPauseInterval(eofCounter)
-// 					readMsgHeaderLogger.Debug("pausing after EOF", "pause", pauseInterval.String())
-// 					time.Sleep(pauseInterval)
-// 					continue
-// 				}
-// 				readMsgHeaderLogger.Error("failed to read message prefix", "error", err)
-// 				continue
-// 			}
-// 			readMsgHeaderLogger.Debug("recieved messageHeader", "messageHeader", string(messageHeader))
-// 			ch <- messageHeader
-// 		}
-// 	}
-// }
 
 // Pause intervals. Increase from 10ms for the first 100ms,
 // then 100ms for the next second

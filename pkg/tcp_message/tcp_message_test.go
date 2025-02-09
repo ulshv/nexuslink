@@ -66,7 +66,7 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 			tcpRW.Write(msg)
 			time.Sleep(200 * time.Millisecond)
 		}
-		time.Sleep(100 * time.Millisecond) // simple waiting for ReadTCPMessagesLoop to process the last msg
+		time.Sleep(200 * time.Millisecond) // simple waiting for ReadTCPMessagesLoop to process the last msg
 		cancel()
 	}()
 
@@ -90,8 +90,9 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 	wg.Wait()
 }
 
-// TODO: add test for partial data in the middle of the message, i.e. Write(msg[:len(msg)/2]), Write(msg[len(msg)/2:])
-func TestPartialData(t *testing.T) {
+// Test for partial data in the middle of the message,
+// i.e. Write(msg[:len(msg)/2]), Write(msg[len(msg)/2:])
+func TestPartialWriteOfTCPMessage(t *testing.T) {
 	msgPayload := pb.TCPMessagePayload{
 		Type: "hello",
 		Data: []byte("hello, world! what's up?"),

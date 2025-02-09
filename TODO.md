@@ -8,7 +8,7 @@
   - [x] Write tests for the new impl (non blocking, goroutine reader)
   - [x] Implement partial data processing:
         i.e. w.Write(msg[:len(msg)/2]), w.Write(msg[len(msg)/2:]) should be propertly handled
-  - [ ] Fix tests for the partial data processing
+  - [x] Fix tests for the partial data processing
   - [ ] [LATER]: Add cases to test misconfigured TCPMessagePayload (corrupted ones)
 
 - [ ] TCPConnection implementation `struct { conn: net.Conn }`
