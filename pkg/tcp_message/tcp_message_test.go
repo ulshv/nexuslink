@@ -43,10 +43,10 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 	tcpRW := &bytes.Buffer{}
 
 	msgPayloads := []*pb.TCPMessagePayload{
-		{Type: "hello"},
-		{Type: "world"},
-		{Type: "foo"},
-		{Type: "bar"},
+		{Type: "hello", Data: []byte("")},
+		{Type: "world", Data: []byte("")},
+		{Type: "foo", Data: []byte("")},
+		{Type: "bar", Data: []byte("")},
 	}
 
 	wg := sync.WaitGroup{}
@@ -54,7 +54,7 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 
 	go func() {
 		defer wg.Done()
-		time.Sleep(1 * time.Second)
+		time.Sleep(3 * time.Second) // to see the pause interval debug logs
 		for _, payload := range msgPayloads {
 			msg, err := NewTCPMessage(payload)
 			if err != nil {
@@ -72,7 +72,9 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 
 	go ReadTCPMessagesLoop(ctx, msgPayloadsCh, tcpRW)
 
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		expectedPayloadIdx := 0
 		for msg := range msgPayloadsCh {
 			if msg.Type != msgPayloads[expectedPayloadIdx].Type {
@@ -80,7 +82,12 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 			}
 			expectedPayloadIdx++
 		}
+		if expectedPayloadIdx != len(msgPayloads) {
+			t.Errorf("Expected %d messages but got %d", len(msgPayloads), expectedPayloadIdx)
+		}
 	}()
 
 	wg.Wait()
 }
+
+// TODO: add test for partial data in the middle of the message, i.e. Write(msg[:len(msg)/2]), Write(msg[len(msg)/2:])
