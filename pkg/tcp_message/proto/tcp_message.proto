@@ -4,6 +4,6 @@ package proto;
 option go_package = "pkg/tcp_message/pb";
 
 message TCPMessagePayload {
-  string type = 1; // `ping`, `tcp_handshake`, `message`, `encrypted_message`, etc.
-  bytes payload = 2;
+  string type = 1; // `ping`, `encryption_handshake`, `message`, `encrypted_message`, etc.
+  bytes data = 2;
 }

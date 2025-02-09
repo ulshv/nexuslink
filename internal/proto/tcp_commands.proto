@@ -37,3 +37,9 @@ message CommandServerRegisterSuccess {
 message CommandServerRegisterFailed {
   string username = 1;
 }
+
+message CommandSendMessage {
+  string from_username = 1;
+  string to_username = 2;
+  string message_body = 3;
+}

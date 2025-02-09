@@ -1,4 +1,4 @@
-package tcp
+package tcp_conn
 
 import (
 	"bufio"
