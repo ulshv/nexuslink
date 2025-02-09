@@ -66,7 +66,8 @@ func ReadTCPMessagesLoop(
 	for {
 		select {
 		case <-ctx.Done():
-			readMsgLogger.Info("context cancelled, exiting ReadTCPMessagesLoop")
+			readMsgLogger.Info("context cancelled, closing channel and exiting ReadTCPMessagesLoop")
+			close(ch)
 			return
 		// case messageHeader, ok := <-messageHeadersCh:
 		// 	if !ok {
@@ -74,7 +75,8 @@ func ReadTCPMessagesLoop(
 		// 		return
 		// 	}
 		default:
-			readMsgLogger.Debug("waiting for the next ':' byte in the buffer...")
+			// readMsgLogger.Debug("waiting for the next ':' byte in the buffer...")
+
 			// ReadBytes doesn't block if there's no data in the reader, it returns io.EOF err
 			messageHeader, err := reader.ReadBytes(':')
 			if err != nil {

@@ -13,7 +13,6 @@ import (
 )
 
 func TestNewTCPMessage(t *testing.T) {
-	t.Skip()
 	t.Run("test message is correctly encoded", func(t *testing.T) {
 		payload := &pb.TCPMessagePayload{
 			Type: "hello",
@@ -40,7 +39,6 @@ func TestNewTCPMessage(t *testing.T) {
 }
 
 func TestReadTCPMessagesLoop(t *testing.T) {
-	t.Skip()
 	tcpRW := &bytes.Buffer{}
 
 	msgPayloads := []*pb.TCPMessagePayload{
@@ -50,26 +48,27 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 		{Type: "bar", Data: []byte("")},
 	}
 
+	msgPayloadsCh := make(chan *pb.TCPMessagePayload)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 
 	go func() {
 		defer wg.Done()
-		time.Sleep(3 * time.Second) // to see the pause interval debug logs
+		time.Sleep(1 * time.Second) // to see the pause interval debug logs
 		for _, payload := range msgPayloads {
 			msg, err := NewTCPMessage(payload)
 			if err != nil {
 				t.Error(err)
 			}
 			tcpRW.Write(msg)
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(200 * time.Millisecond)
 		}
 		time.Sleep(100 * time.Millisecond) // simple waiting for ReadTCPMessagesLoop to process the last msg
+		cancel()
 	}()
-
-	msgPayloadsCh := make(chan *pb.TCPMessagePayload)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	go ReadTCPMessagesLoop(ctx, msgPayloadsCh, tcpRW)
 
@@ -121,6 +120,8 @@ func TestPartialData(t *testing.T) {
 		tcpRW.Write(msgBytes)
 		time.Sleep(100 * time.Millisecond)
 		tcpRW.Write(msgBytes2)
+		time.Sleep(100 * time.Millisecond)
+		cancel()
 	}()
 
 	wg.Add(1)
