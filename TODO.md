@@ -6,7 +6,10 @@
   - [x] Change the impl to support ctx cancellation (currently blocking in default)
   - [x] For the task above, `reader.ReadBytes` run in separate goroutine and listen for `messageHeader`s
   - [x] Write tests for the new impl (non blocking, goroutine reader)
-  - [ ] Implement partial data processing.
+  - [x] Implement partial data processing:
+        i.e. w.Write(msg[:len(msg)/2]), w.Write(msg[len(msg)/2:]) should be propertly handled
+  - [ ] Fix tests for the partial data processing
+  - [ ] [LATER]: Add cases to test misconfigured TCPMessagePayload (corrupted ones)
 
 - [ ] TCPConnection implementation `struct { conn: net.Conn }`
 
