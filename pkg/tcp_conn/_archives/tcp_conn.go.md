@@ -1,3 +1,4 @@
+```go
 package tcp_conn
 
 import (
@@ -98,3 +99,4 @@ func (c *connection) ReadMessagesLoop(ch chan<- *pb.TCPMessage) {
 		ch <- message
 	}
 }
+```

@@ -8,17 +8,19 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ulshv/nexuslink/internal/logger"
 	"github.com/ulshv/nexuslink/pkg/tcp_message/pb"
 	"google.golang.org/protobuf/proto"
 )
 
 func TestNewTCPMessage(t *testing.T) {
 	t.Run("test message is correctly encoded", func(t *testing.T) {
+		newMsgLogger := logger.NewSlogLogger("tcp_message/new_message")
 		payload := &pb.TCPMessagePayload{
 			Type: "hello",
 			Data: []byte("hello, world! what's up?"),
 		}
-		msg, err := NewTCPMessage(payload)
+		msg, err := NewTCPMessage(newMsgLogger, payload)
 		if err != nil {
 			t.Error(err)
 		}
@@ -39,6 +41,8 @@ func TestNewTCPMessage(t *testing.T) {
 }
 
 func TestReadTCPMessagesLoop(t *testing.T) {
+	newMsgLogger := logger.NewSlogLogger("tcp_message/new_message")
+	readMsgLogger := logger.NewSlogLogger("tcp_message/read_messages")
 	tcpRW := &bytes.Buffer{}
 
 	msgPayloads := []*pb.TCPMessagePayload{
@@ -59,7 +63,7 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 		defer wg.Done()
 		time.Sleep(1 * time.Second) // to see the pause interval debug logs
 		for _, payload := range msgPayloads {
-			msg, err := NewTCPMessage(payload)
+			msg, err := NewTCPMessage(newMsgLogger, payload)
 			if err != nil {
 				t.Error(err)
 			}
@@ -70,7 +74,7 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 		cancel()
 	}()
 
-	go ReadTCPMessagesLoop(ctx, msgPayloadsCh, tcpRW)
+	go ReadTCPMessagesLoop(ctx, readMsgLogger, msgPayloadsCh, tcpRW)
 
 	wg.Add(1)
 	go func() {
@@ -93,11 +97,14 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 // Test for partial data in the middle of the message,
 // i.e. Write(msg[:len(msg)/2]), Write(msg[len(msg)/2:])
 func TestPartialWriteOfTCPMessage(t *testing.T) {
+	newMsgLogger := logger.NewSlogLogger("tcp_message/new_message")
+	readMsgLogger := logger.NewSlogLogger("tcp_message/read_messages")
+
 	msgPayload := pb.TCPMessagePayload{
 		Type: "hello",
 		Data: []byte("hello, world! what's up?"),
 	}
-	msg, err := NewTCPMessage(&msgPayload)
+	msg, err := NewTCPMessage(newMsgLogger, &msgPayload)
 	if err != nil {
 		t.Error(err)
 	}
@@ -110,7 +117,7 @@ func TestPartialWriteOfTCPMessage(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go ReadTCPMessagesLoop(ctx, msgPayloadsCh, tcpRW)
+	go ReadTCPMessagesLoop(ctx, readMsgLogger, msgPayloadsCh, tcpRW)
 
 	wg := sync.WaitGroup{}
 

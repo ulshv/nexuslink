@@ -1,3 +1,4 @@
+```go
 package main
 
 import (
@@ -14,3 +15,4 @@ func main() {
 	server := tcp_server.NewServer("0.0.0.0", *port)
 	server.ListenAndHandle()
 }
+```

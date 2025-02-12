@@ -10,6 +10,7 @@ First app implementations of the NexusLink would be
 the following projects (all made with strong pub-key encryption):
 - p2p TCP chat
 - p2p TCP messenger
+- p2p TCP "hole punching"
 - p2p TCP file sharing
 
 Later app implementations could be something like:

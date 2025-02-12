@@ -2,7 +2,7 @@
 
 ## NextsNet (network) / NexusChat (app)
 
-- [ ] TCPMessage impl & improvements
+- [x] TCPMessage impl & improvements
   - [x] Change the impl to support ctx cancellation (currently blocking in default)
   - [x] For the task above, `reader.ReadBytes` run in separate goroutine and listen for `messageHeader`s
   - [x] Write tests for the new impl (non blocking, goroutine reader)
@@ -12,6 +12,8 @@
   - [ ] [LATER]: Add cases to test misconfigured TCPMessagePayload (corrupted ones)
 
 - [ ] TCPConnection implementation `struct { conn: net.Conn }`
+  - [ ] Some tests where we accept net.Conn's ReadWriter interface
+  - [ ]
 
 - [ ] Make a throw-away implementation of client-server or p2p client-client communication using TCPMessage and TCPConnection packages
 - [ ] Create a `apps/experiments/tcp_comm_01` app and use TCPMessage and TCPConn packages

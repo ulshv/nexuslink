@@ -32,11 +32,12 @@ func main() {
 	wg := &sync.WaitGroup{}
 	lp := log_prompt.NewLogPrompt(context.Background(), "> ")
 
+	logger := lp.NewLogger("chat")
 	wg.Add(2)
 
 	go func() {
 		for {
-			lp.Log("[%s@0.0.0.0:5000]: %s", randomUsername(), randomMessage())
+			logger.Log("[%s@0.0.0.0:5000]: %s", randomUsername(), randomMessage())
 			time.Sleep(time.Second)
 		}
 	}()
@@ -45,7 +46,7 @@ func main() {
 		currUser := "admin"
 
 		for msg := range lp.Prompts() {
-			lp.Log("[%s@0.0.0.0:5000]: %s", currUser, msg)
+			logger.Log("[%s@0.0.0.0:5000]: %s", currUser, msg)
 		}
 	}()
 

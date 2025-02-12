@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"unicode/utf8"
 
 	"golang.org/x/term"
@@ -13,12 +14,25 @@ const (
 	CLEAR_LINE = "\r\x1b[K" // Clear current terminal line
 )
 
+type Logger interface {
+	Warn(message string, args ...any)
+	Info(message string, args ...any)
+	Error(message string, args ...any)
+	Debug(message string, args ...any)
+	Log(message string, args ...any)
+}
+
 type LogPrompt struct {
 	prompt       string
 	currInput    string
 	isLastPrompt bool
 	promptsCh    chan string
 	ctx          context.Context
+}
+
+type logPromptLogger struct {
+	*LogPrompt
+	svcName string
 }
 
 func NewLogPrompt(ctx context.Context, prompt string) *LogPrompt {
@@ -28,6 +42,13 @@ func NewLogPrompt(ctx context.Context, prompt string) *LogPrompt {
 		isLastPrompt: false,
 		promptsCh:    make(chan string),
 		ctx:          ctx,
+	}
+}
+
+func (lp *LogPrompt) NewLogger(svcName string) Logger {
+	return &logPromptLogger{
+		LogPrompt: lp,
+		svcName:   svcName,
 	}
 }
 
@@ -42,6 +63,7 @@ func (lp *LogPrompt) Start() {
 		fmt.Println("Failed to set raw mode:", err)
 		return
 	}
+	logger := lp.NewLogger("log_prompt")
 	// Make initial prompt line
 	lp.printPromptLine()
 	// Ensure we restore terminal state on exit
@@ -59,15 +81,15 @@ func (lp *LogPrompt) Start() {
 		// Handle key strokes
 		switch char {
 		case 3: // Ctrl+C
-			lp.Log("Ctrl+C received, press Ctrl+D to exit.")
+			logger.Log("Ctrl+C received, press Ctrl+D to exit.")
 			lp.currInput = ""
 			lp.printPromptLine()
 		case 4: // Ctrl+D
-			lp.Log("Exiting the program.")
+			logger.Log("Exiting the program.")
 			restoreTerminalState(oldTermState) // Restore terminal state before exiting
 			os.Exit(0)
 		case '\n', 13: // Enter
-			lp.Log(lp.prompt + lp.currInput)
+			logger.Log(lp.prompt + lp.currInput)
 			// send currInput to the channel
 			lp.promptsCh <- lp.currInput
 			lp.currInput = ""
@@ -89,21 +111,36 @@ func (lp *LogPrompt) Stop() {
 	// TODO: actually stop the loop started by Start()
 }
 
-func (lp *LogPrompt) Log(message string, args ...any) {
-	if lp.isLastPrompt {
+func (l *logPromptLogger) Log(message string, args ...any) {
+	if l.isLastPrompt {
 		fmt.Print(CLEAR_LINE)
 	}
-	fmt.Printf(message+"\n", args...)
-	lp.printPromptLine()
+	// get every even arg as a string to seamlesly support slog.Attr
+	var params []any
+	var vals []any
+	for i, arg := range args {
+		if i%2 == 0 {
+			params = append(params, arg)
+		} else {
+			vals = append(vals, arg)
+		}
+	}
+	parmsValsStringParts := []string{}
+	for i, param := range params {
+		parmsValsStringParts = append(parmsValsStringParts, fmt.Sprintf("%s=%+v", param, vals[i]))
+	}
+	logMsg := fmt.Sprintf("%s %s\n", message, strings.Join(parmsValsStringParts, ", "))
+	fmt.Printf(logMsg)
+	l.printPromptLine()
 }
 
-func (lp *LogPrompt) printPromptLine() {
+func (lpl *LogPrompt) printPromptLine() {
 	fmt.Print(CLEAR_LINE)
-	fmt.Print(lp.prompt + lp.currInput)
-	lp.isLastPrompt = true
+	fmt.Print(lpl.prompt + lpl.currInput)
+	lpl.isLastPrompt = true
 }
 
-// Helpers to make os.Stdin.Read() return every key stroke in the termanal:
+// Helplers to make os.Stdin.Read() return every key stroke in the termanal:
 
 func makeTerminalRaw() (*term.State, error) {
 	return term.MakeRaw(int(os.Stdin.Fd()))
@@ -111,4 +148,23 @@ func makeTerminalRaw() (*term.State, error) {
 
 func restoreTerminalState(state *term.State) error {
 	return term.Restore(int(os.Stdin.Fd()), state)
+}
+
+// implements logger.Logger interface
+
+func (l *logPromptLogger) Info(message string, args ...any) {
+	l.Log(fmt.Sprintf("[INFO] [%s]: %s", l.svcName, message), args...)
+}
+
+func (l *logPromptLogger) Error(message string, args ...any) {
+	l.Log(fmt.Sprintf("[ERROR] [%s]: %s", l.svcName, message), args...)
+}
+
+func (l *logPromptLogger) Warn(message string, args ...any) {
+	l.Log(fmt.Sprintf("[WARN] [%s]: %s", l.svcName, message), args...)
+}
+
+func (l *logPromptLogger) Debug(message string, args ...any) {
+	// return (implement debug logging later)
+	l.Log(fmt.Sprintf("[DEBUG] [%s]: %s", l.svcName, message), args...)
 }

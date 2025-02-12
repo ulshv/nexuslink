@@ -24,9 +24,7 @@ import (
 )
 
 type TCPMessage []byte
-
-var newMsgLogger = logger.NewLogger("tcp_message/new_message")
-var readMsgLogger = logger.NewLogger("tcp_message/read_messages")
+type TCPMessagePayload = pb.TCPMessagePayload
 
 const (
 	messageHeaderPrefix = "_protobuf_("
@@ -34,37 +32,38 @@ const (
 	maxPayloadSize      = 1024 * 1024 // 1MB, adjust if needed
 )
 
-func NewTCPMessage(payload *pb.TCPMessagePayload) (TCPMessage, error) {
-	newMsgLogger.Debug("NewTCPMessage", "message", payload)
+func NewTCPMessage(logger logger.Logger, payload *pb.TCPMessagePayload) (TCPMessage, error) {
+	logger.Debug("NewTCPMessage", "message", payload)
 	data, err := proto.Marshal(payload)
-	newMsgLogger.Debug("Marshalled payload to bytes", "bytes", len(data), "error", err)
+	logger.Debug("Marshalled payload to bytes", "bytes", len(data), "error", err)
 	if err != nil {
-		newMsgLogger.Error("Failed to marshal payload", "error", err)
+		logger.Error("Failed to marshal payload", "error", err)
 		return nil, fmt.Errorf("failed to marshal payload: %w", err)
 	}
 	header := []byte(fmt.Sprintf("%s%d%s", messageHeaderPrefix, len(data), messageHeaderSuffix))
 	msg := append(header, data...)
-	newMsgLogger.Debug("Made TCPMessage, returning", "bytes", len(msg))
+	logger.Debug("Made TCPMessage, returning", "bytes", len(msg))
 	return msg, nil
 }
 
 func ReadTCPMessagesLoop(
 	ctx context.Context,
+	logger logger.Logger,
 	ch chan<- *pb.TCPMessagePayload,
 	r io.Reader,
 ) {
-	readMsgLogger.Info("ReadTCPMessages")
+	logger.Info("ReadTCPMessages")
 	reader := bufio.NewReader(r)
 	readBytesEofCounter := 0
 	lastReadBytesPauseInterval := time.Duration(0)
 	for {
 		select {
 		case <-ctx.Done():
-			readMsgLogger.Info("context cancelled, closing channel and exiting ReadTCPMessagesLoop")
+			logger.Info("context cancelled, closing channel and exiting ReadTCPMessagesLoop")
 			close(ch)
 			return
 		default:
-			// readMsgLogger.Debug("waiting for the next ':' byte in the buffer...")
+			// logger.Debug("waiting for the next ':' byte in the buffer...")
 
 			// ReadBytes doesn't block if there's no data in the reader, it returns io.EOF err
 			messageHeader, err := reader.ReadBytes(':')
@@ -73,16 +72,16 @@ func ReadTCPMessagesLoop(
 					readBytesEofCounter++
 					pauseInterval := getPauseInterval(readBytesEofCounter)
 					if pauseInterval != lastReadBytesPauseInterval {
-						readMsgLogger.Debug("decreasing pause interval after EOF", "eofCounter", readBytesEofCounter, "pause", pauseInterval.String())
+						logger.Debug("decreasing pause interval after EOF", "eofCounter", readBytesEofCounter, "pause", pauseInterval.String())
 						lastReadBytesPauseInterval = pauseInterval
 					}
 					time.Sleep(pauseInterval)
 					continue
 				}
-				readMsgLogger.Error("failed to read message prefix", "error", err)
+				logger.Error("failed to read message prefix", "error", err)
 				continue
 			}
-			readMsgLogger.Debug("recieved messageHeader", "messageHeader", string(messageHeader))
+			logger.Debug("recieved messageHeader", "messageHeader", string(messageHeader))
 			isPrefixValid := bytes.HasPrefix(messageHeader, []byte(messageHeaderPrefix))
 			if !isPrefixValid {
 				// Trim the messageHeader to 20 bytes if it's longer, to prevent huge logs
@@ -90,26 +89,26 @@ func ReadTCPMessagesLoop(
 				if haderTrimLength > 20 {
 					haderTrimLength = 20
 				}
-				readMsgLogger.Error("invalid message prefix", "prefix", string(messageHeader[:haderTrimLength]))
+				logger.Error("invalid message prefix", "prefix", string(messageHeader[:haderTrimLength]))
 				continue
 			}
 			payloadSizeEndIdx := bytes.Index(messageHeader, []byte(messageHeaderSuffix))
 			if payloadSizeEndIdx == -1 {
-				readMsgLogger.Error("invalid TCP message format, can't calculate payload size", "prefix", string(messageHeader[:20]))
+				logger.Error("invalid TCP message format, can't calculate payload size", "prefix", string(messageHeader[:20]))
 				continue
 			}
 			payloadSizeStr := string(messageHeader[len(messageHeaderPrefix):payloadSizeEndIdx])
 			payloadSize, err := strconv.Atoi(payloadSizeStr)
-			readMsgLogger.Debug("calculated payload size", "payloadSize", payloadSize)
+			logger.Debug("calculated payload size", "payloadSize", payloadSize)
 			if err != nil {
-				readMsgLogger.Error("payload size is not a number", "payloadSizeStr", payloadSizeStr, "error", err)
+				logger.Error("payload size is not a number", "payloadSizeStr", payloadSizeStr, "error", err)
 				continue
 			}
 			if payloadSize > maxPayloadSize {
-				readMsgLogger.Error("payload size is too big", "payloadSize", payloadSize, "maxPayloadSize", maxPayloadSize)
+				logger.Error("payload size is too big", "payloadSize", payloadSize, "maxPayloadSize", maxPayloadSize)
 				continue
 			}
-			readMsgLogger.Debug("start extraction of TCP message payload...")
+			logger.Debug("start extraction of TCP message payload...")
 			binPayload := make([]byte, payloadSize)
 			readPayloadEofCounter := 0
 			lastReadPayloadPauseInterval := time.Duration(0)
@@ -122,7 +121,7 @@ func ReadTCPMessagesLoop(
 						readPayloadEofCounter++
 						pauseInterval := getPauseInterval(readPayloadEofCounter)
 						if pauseInterval != lastReadPayloadPauseInterval {
-							readMsgLogger.Debug("decreasing pause interval after EOF", "eofCounter", readPayloadEofCounter, "pause", pauseInterval.String())
+							logger.Debug("decreasing pause interval after EOF", "eofCounter", readPayloadEofCounter, "pause", pauseInterval.String())
 							lastReadPayloadPauseInterval = pauseInterval
 						}
 						time.Sleep(pauseInterval)
@@ -137,17 +136,17 @@ func ReadTCPMessagesLoop(
 				}
 			}
 			if readPayloadErr != nil {
-				readMsgLogger.Error("failed to read full message payload", "error", err)
+				logger.Error("failed to read full message payload", "error", err)
 				continue
 			}
-			readMsgLogger.Debug("extracted TCP message payload")
+			logger.Debug("extracted TCP message payload")
 			payload := &pb.TCPMessagePayload{}
 			err = proto.Unmarshal(binPayload, payload)
 			if err != nil {
-				readMsgLogger.Error("failed to unmarshal TCPMessagePayload", "error", err)
+				logger.Error("failed to unmarshal TCPMessagePayload", "error", err)
 				continue
 			}
-			readMsgLogger.Info("received TCPMessagePayload, writing to channel", "payloadType", payload.Type, "dataBytes", len(payload.Data))
+			logger.Info("received TCPMessagePayload, writing to channel", "payloadType", payload.Type, "dataBytes", len(payload.Data))
 			ch <- payload
 		}
 	}
