@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 	"unicode/utf8"
 
-	"github.com/ulshv/nexuslink/pkg/logs"
 	"golang.org/x/term"
 )
 
@@ -25,7 +25,8 @@ type LogPrompt struct {
 
 type logPromptLogger struct {
 	*LogPrompt
-	svcName string
+	svcName      string
+	debugEnabled bool
 }
 
 func NewLogPrompt(ctx context.Context, prompt string) *LogPrompt {
@@ -38,10 +39,11 @@ func NewLogPrompt(ctx context.Context, prompt string) *LogPrompt {
 	}
 }
 
-func (lp *LogPrompt) NewLogger(svcName string) logs.Logger {
+func (lp *LogPrompt) NewLogger(svcName string) *logPromptLogger {
 	return &logPromptLogger{
-		LogPrompt: lp,
-		svcName:   svcName,
+		LogPrompt:    lp,
+		svcName:      svcName,
+		debugEnabled: os.Getenv("LOG_LEVEL") == "DEBUG",
 	}
 }
 
@@ -74,15 +76,15 @@ func (lp *LogPrompt) Start() {
 		// Handle key strokes
 		switch char {
 		case 3: // Ctrl+C
-			logger.Log("Ctrl+C received, press Ctrl+D to exit.")
+			logger.logRaw(false, "", "", "Ctrl+C received, press Ctrl+D to exit.")
 			lp.currInput = ""
 			lp.printPromptLine()
 		case 4: // Ctrl+D
-			logger.Log("Exiting the program.")
+			logger.logRaw(false, "", "", "Exiting the program.")
 			restoreTerminalState(oldTermState) // Restore terminal state before exiting
 			os.Exit(0)
 		case '\n', 13: // Enter
-			logger.Log(lp.prompt + lp.currInput)
+			logger.logRaw(false, "", "", lp.prompt+lp.currInput)
 			// send currInput to the channel
 			lp.promptsCh <- lp.currInput
 			lp.currInput = ""
@@ -104,7 +106,13 @@ func (lp *LogPrompt) Stop() {
 	// TODO: actually stop the loop started by Start()
 }
 
-func (l *logPromptLogger) Log(message string, args ...any) {
+func (l *logPromptLogger) logRaw(
+	printMetadata bool,
+	logLevel string,
+	svcName string,
+	message string,
+	args ...any,
+) {
 	if l.isLastPrompt {
 		fmt.Print(CLEAR_LINE)
 	}
@@ -122,7 +130,13 @@ func (l *logPromptLogger) Log(message string, args ...any) {
 	for i, param := range params {
 		parmsValsStringParts = append(parmsValsStringParts, fmt.Sprintf("%s=%+v", param, vals[i]))
 	}
-	logMsg := fmt.Sprintf("%s %s\n", message, strings.Join(parmsValsStringParts, ", "))
+	metadata := ""
+	timestamp := time.Now().Format("2006/01/02 15:04:05")
+
+	if printMetadata {
+		metadata = fmt.Sprintf("%s %s [%s]: ", timestamp, logLevel, svcName)
+	}
+	logMsg := fmt.Sprintf("%s%s %s\n", metadata, message, strings.Join(parmsValsStringParts, ", "))
 	fmt.Printf(logMsg)
 	l.printPromptLine()
 }
@@ -145,19 +159,24 @@ func restoreTerminalState(state *term.State) error {
 
 // implements logger.Logger interface
 
+func (l *logPromptLogger) Log(message string, args ...any) {
+	l.logRaw(false, "", "", message, args...)
+}
+
 func (l *logPromptLogger) Info(message string, args ...any) {
-	l.Log(fmt.Sprintf("[INFO] [%s]: %s", l.svcName, message), args...)
+	l.logRaw(true, "INFO", l.svcName, message, args...)
 }
 
 func (l *logPromptLogger) Error(message string, args ...any) {
-	l.Log(fmt.Sprintf("[ERROR] [%s]: %s", l.svcName, message), args...)
+	l.logRaw(true, "ERROR", l.svcName, message, args...)
 }
 
 func (l *logPromptLogger) Warn(message string, args ...any) {
-	l.Log(fmt.Sprintf("[WARN] [%s]: %s", l.svcName, message), args...)
+	l.logRaw(true, "WARN", l.svcName, message, args...)
 }
 
 func (l *logPromptLogger) Debug(message string, args ...any) {
-	// return (implement debug logging later)
-	l.Log(fmt.Sprintf("[DEBUG] [%s]: %s", l.svcName, message), args...)
+	if l.debugEnabled {
+		l.logRaw(true, "DEBUG", l.svcName, message, args...)
+	}
 }

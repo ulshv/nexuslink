@@ -98,7 +98,7 @@ func (l logger) Log(msg string, args ...any) {
 	l.Logger.Info(msg, args...)
 }
 
-func NewSlogLogger(serviceName string) Logger {
+func NewSlogLogger(serviceName string) logger {
 	debugMode := os.Getenv("LOG_LEVEL") == "debug"
 	useJSON := os.Getenv("LOG_TYPE") == "json"
 	logLevel := slog.LevelInfo

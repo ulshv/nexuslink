@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"sync"
 	"time"
@@ -32,12 +33,15 @@ func main() {
 	wg := &sync.WaitGroup{}
 	lp := log_prompt.NewLogPrompt(context.Background(), "> ")
 
+	go lp.Start()
+
 	logger := lp.NewLogger("chat")
 	wg.Add(2)
 
 	go func() {
 		for {
-			logger.Log("[%s@0.0.0.0:5000]: %s", randomUsername(), randomMessage())
+			logger.Info("Before printing", "user", "alice")
+			logger.Log(fmt.Sprintf("[%s@0.0.0.0:5000]: %s", randomUsername(), randomMessage()))
 			time.Sleep(time.Second)
 		}
 	}()
@@ -46,9 +50,9 @@ func main() {
 		currUser := "admin"
 
 		for msg := range lp.Prompts() {
-			logger.Log("[%s@0.0.0.0:5000]: %s", currUser, msg)
+			logger.Log(fmt.Sprintf("[%s@0.0.0.0:5000]: %s", currUser, msg))
 		}
 	}()
 
-	lp.Start()
+	wg.Wait()
 }
