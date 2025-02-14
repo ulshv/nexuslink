@@ -1,3 +1,4 @@
+```go
 package main
 
 func handleUnknownCommand(client *ChatClient, command string) {
@@ -9,3 +10,4 @@ func handleHelp(client *ChatClient) {
 	client.lp.Log("- connect <host:port>: Connect to a server")
 	client.lp.Log("  examples: 'connect :5000' (localhost), 'connect chat.nexuslink.dev:5000' (remote server)")
 }
+```

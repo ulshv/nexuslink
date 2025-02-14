@@ -1,3 +1,4 @@
+```go
 package main
 
 import (
@@ -56,3 +57,4 @@ func (c *ChatClient) sendMessage(message []byte) {
 	// 	Payload: message,
 	// })
 }
+```

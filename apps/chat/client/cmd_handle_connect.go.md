@@ -1,3 +1,4 @@
+```go
 package main
 
 import (
@@ -33,3 +34,4 @@ func handleConnect(client *ChatClient, params []string) {
 	client.setServerConn(serverConn)
 	client.sendMessage([]byte("what's up!"))
 }
+```

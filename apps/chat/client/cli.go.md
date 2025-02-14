@@ -1,3 +1,4 @@
+```go
 package main
 
 import "strings"
@@ -25,3 +26,4 @@ func handlePrompt(client *ChatClient, prompt string) {
 		handleUnknownCommand(client, command)
 	}
 }
+```
