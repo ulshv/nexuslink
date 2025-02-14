@@ -8,14 +8,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ulshv/nexuslink/internal/logger"
+	"github.com/ulshv/nexuslink/pkg/logs"
 	"github.com/ulshv/nexuslink/pkg/tcp_message/pb"
 	"google.golang.org/protobuf/proto"
 )
 
 func TestNewTCPMessage(t *testing.T) {
 	t.Run("test message is correctly encoded", func(t *testing.T) {
-		newMsgLogger := logger.NewSlogLogger("tcp_message/new_message")
+		newMsgLogger := logs.NewSlogLogger("tcp_message/new_message")
 		payload := &pb.TCPMessagePayload{
 			Type: "hello",
 			Data: []byte("hello, world! what's up?"),
@@ -41,8 +41,8 @@ func TestNewTCPMessage(t *testing.T) {
 }
 
 func TestReadTCPMessagesLoop(t *testing.T) {
-	newMsgLogger := logger.NewSlogLogger("tcp_message/new_message")
-	readMsgLogger := logger.NewSlogLogger("tcp_message/read_messages")
+	newMsgLogger := logs.NewSlogLogger("tcp_message/new_message")
+	readMsgLogger := logs.NewSlogLogger("tcp_message/read_messages")
 	tcpRW := &bytes.Buffer{}
 
 	msgPayloads := []*pb.TCPMessagePayload{
@@ -97,8 +97,8 @@ func TestReadTCPMessagesLoop(t *testing.T) {
 // Test for partial data in the middle of the message,
 // i.e. Write(msg[:len(msg)/2]), Write(msg[len(msg)/2:])
 func TestPartialWriteOfTCPMessage(t *testing.T) {
-	newMsgLogger := logger.NewSlogLogger("tcp_message/new_message")
-	readMsgLogger := logger.NewSlogLogger("tcp_message/read_messages")
+	newMsgLogger := logs.NewSlogLogger("tcp_message/new_message")
+	readMsgLogger := logs.NewSlogLogger("tcp_message/read_messages")
 
 	msgPayload := pb.TCPMessagePayload{
 		Type: "hello",

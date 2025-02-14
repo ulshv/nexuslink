@@ -18,7 +18,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ulshv/nexuslink/internal/logger"
+	"github.com/ulshv/nexuslink/pkg/logs"
 	"github.com/ulshv/nexuslink/pkg/tcp_message/pb"
 	"google.golang.org/protobuf/proto"
 )
@@ -32,7 +32,7 @@ const (
 	maxPayloadSize      = 1024 * 1024 // 1MB, adjust if needed
 )
 
-func NewTCPMessage(logger logger.Logger, payload *pb.TCPMessagePayload) (TCPMessage, error) {
+func NewTCPMessage(logger logs.Logger, payload *pb.TCPMessagePayload) (TCPMessage, error) {
 	logger.Debug("NewTCPMessage", "message", payload)
 	data, err := proto.Marshal(payload)
 	logger.Debug("Marshalled payload to bytes", "bytes", len(data), "error", err)
@@ -48,7 +48,7 @@ func NewTCPMessage(logger logger.Logger, payload *pb.TCPMessagePayload) (TCPMess
 
 func ReadTCPMessagesLoop(
 	ctx context.Context,
-	logger logger.Logger,
+	logger logs.Logger,
 	ch chan<- *pb.TCPMessagePayload,
 	r io.Reader,
 ) {

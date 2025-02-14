@@ -7,20 +7,13 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/ulshv/nexuslink/pkg/logs"
 	"golang.org/x/term"
 )
 
 const (
 	CLEAR_LINE = "\r\x1b[K" // Clear current terminal line
 )
-
-type Logger interface {
-	Warn(message string, args ...any)
-	Info(message string, args ...any)
-	Error(message string, args ...any)
-	Debug(message string, args ...any)
-	Log(message string, args ...any)
-}
 
 type LogPrompt struct {
 	prompt       string
@@ -45,7 +38,7 @@ func NewLogPrompt(ctx context.Context, prompt string) *LogPrompt {
 	}
 }
 
-func (lp *LogPrompt) NewLogger(svcName string) Logger {
+func (lp *LogPrompt) NewLogger(svcName string) logs.Logger {
 	return &logPromptLogger{
 		LogPrompt: lp,
 		svcName:   svcName,
