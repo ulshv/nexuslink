@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/ulshv/nexuslink/pkg/log_prompt"
 	"github.com/ulshv/nexuslink/pkg/tcp_message"
@@ -78,13 +79,25 @@ func handleConnection(lp *log_prompt.LogPrompt, conn net.Conn) {
 	msgCh := make(chan *pb.TCPMessagePayload)
 
 	go func() {
-		defer conn.Close()
+		// defer conn.Close()
 		go tcp_message.ReadTCPMessagesLoop(ctx, logger, msgCh, conn)
 	}()
 
 	go func() {
-		for msg := range msgCh {
-			logger.Info("Received message", "type", msg.Type, "data", string(msg.Data))
+		for {
+			select {
+			case msg := <-msgCh:
+				logger.Info("Received message", "type", msg.Type, "data", string(msg.Data))
+			case <-time.After(1 * time.Second):
+				payload := &pb.TCPMessagePayload{
+					Type: "ping",
+					Data: []byte("ping from the server"),
+				}
+				msg, _ := tcp_message.NewTCPMessage(lp.NewLogger("client"), payload)
+				conn.Write(msg)
+			case <-ctx.Done():
+				return
+			}
 		}
 	}()
 }
@@ -111,4 +124,24 @@ func handleConnectCommand(lp *log_prompt.LogPrompt, params []string) {
 	}
 	msg, _ := tcp_message.NewTCPMessage(lp.NewLogger("client"), payload)
 	conn.Write(msg)
+
+	ctx := context.Background()
+	msgCh := make(chan *pb.TCPMessagePayload)
+
+	go func() {
+		// defer conn.Close()
+		go tcp_message.ReadTCPMessagesLoop(ctx, logger, msgCh, conn)
+	}()
+
+	go func() {
+		for msg := range msgCh {
+			logger.Info("Received on the client", "type", msg.Type, "data", string(msg.Data))
+			payload := &pb.TCPMessagePayload{
+				Type: "pong",
+				Data: []byte("pong from the client"),
+			}
+			msg, _ := tcp_message.NewTCPMessage(lp.NewLogger("client"), payload)
+			conn.Write(msg)
+		}
+	}()
 }
